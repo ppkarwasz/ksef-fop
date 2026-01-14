@@ -44,6 +44,14 @@
         <!-- Java version -->
         <maven.compiler.release>8</maven.compiler.release>
         <required.jdk.version>21</required.jdk.version>
+        <!--
+            Upper bound (exclusive) of the JDK version used during release builds.
+            By setting this to required.jdk.version + 1, we ensure that the release builds are reproducible.
+         -->
+        <upper.jdk.version>22</upper.jdk.version>
+
+        <!-- Make build reproducible -->
+        <project.build.outputTimestamp>2026-01-14T10:22:34Z</project.build.outputTimestamp>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>2.0.17</slf4j.version>
@@ -331,6 +339,37 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Release profile -->
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java</id>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[${required.jdk.version},${upper.jdk.version})</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
