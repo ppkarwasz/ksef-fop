@@ -48,6 +48,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>2.0.17</slf4j.version>
         <annotations.version>24.0.1</annotations.version>
+        <lombok.version>1.18.42</lombok.version>
         <sonar.organization>ksef4dev</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <zxing.version>3.5.2</zxing.version>
@@ -87,6 +88,16 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>${maven.compiler.release}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                    <annotationProcessors>
+                        <processor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</processor>
+                        <processor>lombok.launch.AnnotationProcessorHider$ClaimingProcessor</processor>
+                    </annotationProcessors>
                 </configuration>
             </plugin>
 
@@ -188,7 +199,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -214,6 +225,16 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
         <dependency>
@@ -238,7 +259,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.42</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
