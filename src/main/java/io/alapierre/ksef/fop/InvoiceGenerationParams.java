@@ -17,6 +17,9 @@ public class InvoiceGenerationParams {
     @Nullable
     private String verificationLink;
 
+    @Nullable
+    private String certificateVerificationLink;
+
     private byte[] logo;
 
     @Nullable

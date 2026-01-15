@@ -21,6 +21,7 @@ import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class PdfGenerator {
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws IOException, TransformerException, FOPException {
         String langCode = params.getLanguage().getCode();
-        List<QrCodeData> qrCodes = buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
+        List<QrCodeData> qrCodes = buildQrCodes(params, invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, out);
     }
 
@@ -250,11 +251,41 @@ public class PdfGenerator {
         if (value != null) transformer.setParameter(name, value);
     }
 
-    private @Nullable List<QrCodeData> buildQrCodes(@Nullable InvoiceQRCodeGeneratorRequest req,
-                                                    @Nullable String ksefNumber,
-                                                    byte[] invoiceXmlBytes,
-                                                    String langCode) {
-        return qrCodeBuilder.buildQrCodes(req, ksefNumber, invoiceXmlBytes, langCode);
+    private List<QrCodeData> buildQrCodes(@NotNull InvoiceGenerationParams req,
+                                          byte[] invoiceXmlBytes,
+                                          String langCode) {
+        List<QrCodeData> qrCodes = new ArrayList<>();
+
+        String ksefNumber = req.getKsefNumber();
+        String verificationLink = req.getVerificationLink();
+        InvoiceQRCodeGeneratorRequest qrCodeRequest = req.getInvoiceQRCodeGeneratorRequest();
+
+        QrCodeData onlineQrCode = null;
+        if (verificationLink != null) {
+            onlineQrCode = qrCodeBuilder.buildOnlineQr(verificationLink, ksefNumber, langCode);
+        } else if (qrCodeRequest != null) {
+            onlineQrCode = qrCodeBuilder.buildOnlineQr(qrCodeRequest, ksefNumber, invoiceXmlBytes, langCode);
+        }
+
+        if (onlineQrCode != null) {
+            qrCodes.add(onlineQrCode);
+            // Kod II only if offline
+            if (ksefNumber == null) {
+                String certificateVerificationLink = req.getCertificateVerificationLink();
+
+                QrCodeData certificateQrCode = null;
+                if (certificateVerificationLink != null) {
+                    certificateQrCode = qrCodeBuilder.buildCertificateQr(certificateVerificationLink, langCode);
+                } else if (qrCodeRequest != null) {
+                    certificateQrCode = qrCodeBuilder.buildCertificateQr(qrCodeRequest, invoiceXmlBytes, langCode);
+                }
+
+                if (certificateQrCode != null) {
+                    qrCodes.add(certificateQrCode);
+                }
+            }
+        }
+        return qrCodes;
     }
 
 

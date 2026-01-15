@@ -62,11 +62,17 @@ public class QrCodeBuilder {
         String link = VerificationLinkGenerator.generateVerificationLink(
                 req.getEnvironmentUrl(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
 
+        return buildOnlineQr(link, ksefNumber, langCode);
+    }
+
+    public @NotNull QrCodeData buildOnlineQr(@NotNull String verificationLink,
+                                             @Nullable String ksefNumber,
+                                             @Nullable String langCode) {
         String labelOffline = translationService.getTranslation(langCode, "qr.offline");
         String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
 
         String label = Strings.defaultIfEmpty(ksefNumber, labelOffline);
-        return qrFromLink(link, label, titleOnline);
+        return qrFromLink(verificationLink, label, titleOnline);
     }
 
     /**
@@ -89,9 +95,13 @@ public class QrCodeBuilder {
                 req.getPrivateKey(),
                 invoiceXmlBytes
         );
+        return buildCertificateQr(link, langCode);
+    }
+
+    public @NotNull QrCodeData buildCertificateQr(@NotNull String verificationLink, @Nullable String langCode) {
         String labelCert = translationService.getTranslation(langCode, "qr.certificate");
         String titleCert = translationService.getTranslation(langCode, "qr.certificateTitle");
-        return qrFromLink(link, labelCert, titleCert);
+        return qrFromLink(verificationLink, labelCert, titleCert);
     }
 
     /**
