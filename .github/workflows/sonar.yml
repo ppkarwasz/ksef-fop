@@ -35,7 +35,7 @@ jobs:
       - name: Print debug info
         shell: bash
         env:
-          PULL_REQUESTS: ${{ toJson(github.event.workflow_run.event.pull_requests) }}
+          PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
           jq . <<< "$PULL_REQUESTS"
 
