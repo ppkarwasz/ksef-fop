@@ -63,10 +63,10 @@ jobs:
           # Only set pull request properties when building a PR
           if [ -n "$PR_NUMBER" ]; then
             cat >> target/sonar-project.properties <<EOF
-            sonar.pullrequest.key=$PR_NUMBER
-            sonar.pullrequest.branch=$PR_BRANCH
-            sonar.pullrequest.base=$PR_BASE
-            EOF
+          sonar.pullrequest.key=$PR_NUMBER
+          sonar.pullrequest.branch=$PR_BRANCH
+          sonar.pullrequest.base=$PR_BASE
+          EOF
           fi
 
       - name: Upload coverage, test results and binary artifacts
