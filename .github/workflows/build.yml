@@ -53,9 +53,9 @@ jobs:
             mvn dependency:build-classpath \
               -Dmdep.scope="$1" \
               -Dmdep.localRepoProperty=.m2/repository \
-              -Dmdep.separator=, \
+              -Dmdep.pathSeparator=, \
               -Dmdep.outputFile=target/dependencies.txt > /dev/null
-            tr '\n' ',' < target/dependencies.txt
+            cat target/dependencies.txt
           }
           echo "sonar.java.libraries=$(get_classpath compile)" >> target/sonar-project.properties
           echo "sonar.java.test.libraries=$(get_classpath test)" >> target/sonar-project.properties
