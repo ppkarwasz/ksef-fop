@@ -32,23 +32,20 @@ jobs:
           path: 'target'
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Print debug info
+      - name: Restore Maven cache
+        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
+        with:
+          key: setup-java-${{ runner.os }}-${{ runner.arch }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+
+      - name: Print SonarQube configuration
         shell: bash
-        env:
-          PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
-          jq . <<< "$PULL_REQUESTS"
+          cat target/sonar-project.properties
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # 7.0.0
         with:
-          args: >
-            -Dsonar.organization=ksef-fop-test
-            -Dsonar.projectKey=ksef-fop-test_ksef
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.java.test.binaries=target/test-classes
-            -Dsonar.pullrequest.key=${{ github.event.workflow_run.pull_requests[0].number }}
-            -Dsonar.pullrequest.branch=${{ github.event.workflow_run.pull_requests[0].head.ref }}
-            -Dsonar.pullrequest.base=${{ github.event.workflow_run.pull_requests[0].base.ref }}
+          args: "-Dproject.settings=target/sonar-project.properties"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

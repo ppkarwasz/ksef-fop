@@ -31,12 +31,51 @@ jobs:
           mvn --show-version --batch-mode --errors --no-transfer-progress \
           verify jacoco:report
 
+      - name: Prepare SonarQube configuration
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          mkdir -p target
+          
+          # Static content
+          cat > target/sonar-project.properties <<EOF
+          sonar.organization=ksef-fop-test
+          sonar.projectKey=ksef-fop-test_ksef
+          sonar.java.binaries=target/classes
+          sonar.java.test.binaries=target/test-classes
+          EOF
+          
+          # Classpaths
+          get_classpath() {
+            mvn dependency:build-classpath \
+              -Dmdep.scope="$1" \
+              -Dmdep.localRepoProperty=.m2/repository \
+              -Dmdep.separator=, \
+              -Dmdep.outputFile=target/dependencies.txt > /dev/null
+            tr '\n' ',' < target/dependencies.txt
+          }
+          echo "sonar.java.libraries=$(get_classpath compile)" >> target/sonar-project.properties
+          echo "sonar.java.test.libraries=$(get_classpath test)" >> target/sonar-project.properties
+
+          # Only set pull request properties when building a PR
+          if [ -n "$PR_NUMBER" ]; then
+            cat >> target/sonar-project.properties <<EOF
+            sonar.pullrequest.key=$PR_NUMBER
+            sonar.pullrequest.branch=$PR_BRANCH
+            sonar.pullrequest.base=$PR_BASE
+            EOF
+          fi
+
       - name: Upload coverage, test results and binary artifacts
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # 6.0.0
         with:
           name: test-results
           path: |
+            target/sonar-project.properties
             target/classes/
             target/test-classes/
             target/surefire-reports/
