@@ -32,6 +32,13 @@ jobs:
           path: 'target'
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Print debug info
+        shell: bash
+        env:
+          PULL_REQUESTS: ${{ toJson(github.event.workflow_run.event.pull_requests) }}
+        run: |
+          jq . <<< "$PULL_REQUESTS"
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # 7.0.0
         with:
