@@ -61,7 +61,6 @@ jobs:
           get_classpath() {
             mvn dependency:build-classpath \
               -Dmdep.scope="$1" \
-              -Dmdep.localRepoProperty=.m2/repository \
               -Dmdep.pathSeparator=, \
               -Dmdep.outputFile=target/dependencies.txt > /dev/null
             cat target/dependencies.txt
