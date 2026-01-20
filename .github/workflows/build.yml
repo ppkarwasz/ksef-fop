@@ -23,7 +23,16 @@ jobs:
         with:
           java-version: 21
           distribution: 'temurin'
-          cache: 'maven'
+
+      # We set up the Maven cache separately to have a stabler cache key and path parameters.
+      # The `path` parameter is also used as an implicit cache key.
+      - name: Setup Maven cache
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
+        with:
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            setup-java-${{ runner.os }}-maven-
+          path: ~/.m2/repository
 
       - name: Build
         shell: bash

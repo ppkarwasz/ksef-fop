@@ -35,10 +35,9 @@ jobs:
       - name: Restore Maven cache
         uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
         with:
-          # ${{ runner.arch }} returns X64 instead of x64, so we need to hardcode the platform here.
-          key: setup-java-Linux-x64-maven-${{ hashFiles('**/pom.xml') }}
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            setup-java-Linux-x64-maven-
+            setup-java-${{ runner.os }}-maven-
           path: ~/.m2/repository
 
       - name: Print SonarQube configuration
