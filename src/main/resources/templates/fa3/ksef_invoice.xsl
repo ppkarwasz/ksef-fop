@@ -2466,6 +2466,7 @@
     </xsl:template>
 
     <xsl:template match="crd:Podmiot2">
+        <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
         <fo:table font-size="7pt" table-layout="fixed" width="100%">
             <fo:table-body>
                 <xsl:if test="crd:NrEORI">
@@ -2479,48 +2480,47 @@
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
-                <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrVatUE">
+                <xsl:if test="$id/crd:NrVatUE">
                     <fo:table-row>
                         <fo:table-cell>
                             <fo:block text-align="left" padding-bottom="3px">
                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'vatUe.number', $labels)"/>: </fo:inline>
-                                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:KodUE"/>
-                                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                                <xsl:value-of select="$id/crd:KodUE"/>
+                                <xsl:value-of select="$id/crd:NrVatUE"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
-                <xsl:if test="crd:DaneIdentyfikacyjne/crd:NIP">
+                <xsl:if test="$id/crd:NIP">
                     <fo:table-row>
                         <fo:table-cell>
                             <fo:block text-align="left" padding-bottom="3px">
                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
-                                <xsl:value-of
-                                        select="crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                <xsl:value-of select="$id/crd:NIP"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
-                <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrID">
+                <xsl:if test="$id/crd:NrID">
                     <fo:table-row>
                         <fo:table-cell>
                             <fo:block text-align="left" padding-bottom="3px">
                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
-                                <xsl:value-of
-                                        select="crd:DaneIdentyfikacyjne/crd:NrID"/>
+                                <xsl:value-of select="$id/crd:NrID"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
+                <xsl:if test="$id/crd:Nazwa">
                     <fo:table-row>
                         <fo:table-cell>
                             <fo:block text-align="left">
                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
-                            <xsl:value-of
-                                    select="crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                                <xsl:value-of select="$id/crd:Nazwa"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
+                </xsl:if>
                 <fo:table-row>
                     <fo:table-cell padding-top="16px">
                         <fo:block text-align="left" padding-bottom="3px">
@@ -2582,6 +2582,7 @@
     </xsl:template>
 
     <xsl:template match="crd:Podmiot3">
+        <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
         <xsl:choose>
             <xsl:when test="crd:Rola = 5">
                 <fo:block/>
@@ -2626,22 +2627,22 @@
             </xsl:if>
         </fo:block>
         <fo:block text-align="left" padding-bottom="3px">
-            <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrVatUE">
+            <xsl:if test="$id/crd:NrVatUE">
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'vatUe.number', $labels)"/>: </fo:inline>
-                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:KodUE"/>
-                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                <xsl:value-of select="$id/crd:KodUE"/>
+                <xsl:value-of select="$id/crd:NrVatUE"/>
             </xsl:if>
-            <xsl:if test="crd:DaneIdentyfikacyjne/crd:NIP">
+            <xsl:if test="$id/crd:NIP">
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
-                <xsl:value-of
-                        select="crd:DaneIdentyfikacyjne/crd:NIP"/>
+                <xsl:value-of select="$id/crd:NIP"/>
             </xsl:if>
         </fo:block>
+        <xsl:if test="$id/crd:Nazwa">
             <fo:block text-align="left" padding-bottom="3px">
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
-            <xsl:value-of
-                    select="crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                <xsl:value-of select="$id/crd:Nazwa"/>
             </fo:block>
+        </xsl:if>
         <xsl:if test="crd:Udzial">
             <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'share', $labels)"/>: </fo:inline>
             <xsl:value-of select="crd:Udzial"/>%
